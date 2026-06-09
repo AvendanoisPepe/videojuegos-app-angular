@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importamos el motor de Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Limpieza base de la aplicación (Para quitar el fondo blanco y márgenes) */
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #0d0e15; /* Fondo oscuro profundo predeterminado */
+  color: #e2e8f0;            /* Texto claro suave */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
