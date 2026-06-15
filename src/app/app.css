@@ -1,0 +1,73 @@
+/* Base oscura para que el fondo cubra toda la pantalla */
+:host { display: block; }
+
+.tech-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #0d0e15;
+  /* rejilla tecnológica */
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+  background-size: 42px 42px;
+  animation: gridMove 18s linear infinite;
+}
+
+/* Destellos de color tipo "glow" tecnológico */
+.tech-glow {
+  position: fixed;
+  z-index: 0;
+  width: 480px;
+  height: 480px;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.25;
+  pointer-events: none;
+}
+.tech-glow--blue {
+  top: -120px;
+  left: -100px;
+  background: #3b82f6;
+  animation: floatGlow 12s ease-in-out infinite;
+}
+.tech-glow--purple {
+  bottom: -140px;
+  right: -120px;
+  background: #8b5cf6;
+  animation: floatGlow 15s ease-in-out infinite reverse;
+}
+
+@keyframes gridMove {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 42px 42px, 42px 42px; }
+}
+
+@keyframes floatGlow {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(40px, 30px); }
+}
+
+/* Scroll personalizado */
+.custom-scroll::-webkit-scrollbar {
+	width: 3px;
+	height: 4px;
+	/* Más delgado */
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+	background: #f0f0f0;
+	/* o un gris claro si prefieres */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+	background-color: #999;
+	/* Color del scroll */
+	border-radius: 4px;
+	border: 1px solid transparent;
+}
+
+.custom-scroll:hover::-webkit-scrollbar-thumb {
+	background-color: #666;
+	/* Más visible al hacer hover */
+}

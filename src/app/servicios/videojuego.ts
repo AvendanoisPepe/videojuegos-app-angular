@@ -5,9 +5,13 @@ import { Observable } from 'rxjs';
 // Creamos una interfaz para decirle a Angular qué forma tienen nuestros datos (el mismo molde de C#)
 export interface Videojuego {
   id?: number; // El ? significa que es opcional (porque al crear uno nuevo, .NET le asigna el ID)
-  título: string; 
-  gênero?: string; // Para evitar líos con la 'é', usemos de momento la propiedad exacta que viste o ponla opcional
-  género: string; 
+  titulo: string; 
+  genero: string; 
+  estado: string;
+  imagen: string;
+  consola: string;
+  ranking: 0,
+  descripcion: string
 }
 
 @Injectable({

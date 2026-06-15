@@ -1,82 +1,266 @@
-<!-- <div class="contenedor">
-  <h1>Nuestra Colección de Videojuegos</h1>
+<!-- FONDO TECNOLÓGICO: capa fija detrás de todo -->
+<div class="tech-bg"></div>
+<div class="tech-glow tech-glow--blue"></div>
+<div class="tech-glow tech-glow--purple"></div>
 
-  <div class="formulario">
-    <input type="text" [(ngModel)]="nuevoJuego['título']" placeholder="Título del juego (ej: Hogwarts Legacy)" />
-    <input type="text" [(ngModel)]="nuevoJuego['género']" placeholder="Género (ej: RPG / Acción)" />
-    <button (click)="agregarVideojuego()">Añadir Juego</button>
+<div class="relative z-10 min-h-screen text-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+  <div class="lg:col-span-7 bg-[#131520]/80 backdrop-blur-xl border border-white/5 rounded-2xl p-6 shadow-2xl flex flex-col h-[calc(100vh-3rem)]">    
+    <h2 class="text-xl font-bold mb-4 tracking-wide border-b border-white/5 pb-3 flex justify-between items-center flex-shrink-0">
+      <span>Mis Juegos Registrados</span>
+      <span class="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full">{{ juegosFiltrados.length }} Encontrados</span>
+    </h2>
+
+    <div class="flex-1 overflow-y-auto pr-2 custom-scroll mb-4">
+      <p *ngIf="juegosFiltrados.length === 0" class="text-center text-slate-400 text-sm italic mt-10">
+        No se encontraron videojuegos con los filtros seleccionados...
+      </p>
+
+      <div *ngIf="juegosFiltrados.length > 0" class="columns-3 xl:columns-4 gap-3 p-2">
+        <div
+          *ngFor="let juego of juegosFiltrados"
+          class="group break-inside-avoid mb-3 bg-[#1a1d30] border border-white/5 hover:border-purple-500/30 rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 transform hover:-translate-y-1"
+        >
+          <div class="relative bg-slate-800 overflow-hidden">
+            <img
+              *ngIf="juego['imagen']"
+              [src]="juego['imagen']"
+              alt="Portada"
+              class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div
+              *ngIf="!juego['imagen']"
+              class="w-full h-32 bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center"
+            >
+              <span class="text-slate-500 text-xs italic">Sin portada</span>
+            </div>
+            <div
+              class="absolute top-2 right-2 bg-black/70 backdrop-blur-md border border-yellow-500/30 text-yellow-400 text-xs font-bold px-2 py-1 rounded-md"
+            >
+              ⭐ {{ juego['ranking'] || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="p-3 flex flex-col justify-between gap-3">
+            <div>
+              <div class="flex justify-between items-start gap-2">
+                <h3 class="text-white font-semibold text-base tracking-wide line-clamp-1">
+                  {{ getTitulo(juego) }}
+                </h3>
+                <button
+                  (click)="eliminarVideojuego(juego['id'])"
+                  class="text-slate-500 hover:text-red-400 p-1 rounded transition-colors text-xs"
+                  title="Eliminar juego"
+                >
+                  ✕
+                </button>
+              </div>
+              <p class="text-slate-400 text-xs line-clamp-3 mt-1 italic">
+                {{ juego['descripcion'] || 'Sin descripcion añadida...' }}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/5">
+              <span class="text-[10px] bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded font-medium uppercase tracking-wider">
+                {{ getGenero(juego) }}
+              </span>
+              <span *ngIf="juego['consola']" class="text-[10px] bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded font-medium uppercase">
+                🎮 {{ juego['consola'] }}
+              </span>
+              <span
+                *ngIf="juego['estado']"
+                [ngClass]="{
+                  'text-[10px] px-2 py-0.5 rounded font-medium uppercase': true,
+                  'bg-emerald-500/10 text-emerald-300': juego['estado'] === 'Completado',
+                  'bg-yellow-500/10 text-yellow-400': juego['estado'] === 'Proceso' || juego['estado'] === 'En Progreso',
+                  'bg-red-500/10 text-red-400': juego['estado'] === 'Pendiente'
+                }"
+              >
+                ⏱️ {{ juego['estado'] }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-3 pt-4 border-t border-white/5 bg-[#131520]/40 flex-shrink-0">
+      
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="filtroTexto"
+          placeholder="🔍 Buscar videojuego por nombre..."
+          class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-slate-400 outline-none focus:border-blue-500 text-sm transition-colors"
+        />
+        <button *ngIf="filtroTexto" (click)="filtroTexto = ''" class="absolute right-3 top-2.5 text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+        
+        <div>
+          <input
+            type="text"
+            [(ngModel)]="filtroGenero"
+            placeholder="Genero (ej: RPG)"
+            class="w-full bg-[#1a1d30] border border-white/10 rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 text-xs transition-colors h-9"
+          />
+        </div>
+
+        <div>
+          <select [(ngModel)]="filtroConsola" class="w-full bg-[#1a1d30] border border-white/10 rounded-xl px-2 py-2 text-white outline-none focus:border-blue-500 text-xs transition-colors h-9">
+            <option value="">Consola: Todas</option>
+            <option value="PC">PC</option>
+            <option value="Playstation">Playstation</option>
+            <option value="Xbox">Xbox</option>
+            <option value="Nintendo">Nintendo</option>
+          </select>
+        </div>
+
+        <div>
+          <select [(ngModel)]="filtroEstado" class="w-full bg-[#1a1d30] border border-white/10 rounded-xl px-2 py-2 text-white outline-none focus:border-blue-500 text-xs transition-colors h-9">
+            <option value="">Estado: Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Proceso">Proceso</option>
+            <option value="Completado">Completado</option>
+          </select>
+        </div>
+
+        <div>
+          <select [(ngModel)]="ordenarPor" class="w-full bg-[#1a1d30] border border-white/10 rounded-xl px-2 py-2 text-white outline-none focus:border-purple-500 text-xs transition-colors h-9">
+            <option value="">Organizar por...</option>
+            <option value="alfabetico">🔤 Abecedario</option>
+            <option value="ranking">⭐ Mejor Ranking</option>
+          </select>
+        </div>
+
+        <button
+          (click)="filtroTexto=''; filtroGenero=''; filtroConsola=''; filtroEstado=''; ordenarPor=''"
+          class="col-span-2 md:col-span-1 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-xl text-xs transition-all flex items-center justify-center gap-1 border border-white/5 h-9"
+          title="Limpiar todos los filtros"
+        >
+          🔄 Limpiar
+        </button>
+
+      </div>
+    </div>
+
   </div>
 
-  <p *ngIf="listJuegos.length === 0">No hay videojuegos registrados en el sistema...</p>
+  <div class="lg:col-span-5 flex flex-col gap-6 h-[calc(100vh-3rem)]">
+    <div class="bg-[#131520]/80 backdrop-blur-xl border border-white/5 rounded-2xl p-6 shadow-2xl">
+      <h1
+        class="text-3xl font-extrabold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight mb-2"
+      >
+        Coleccion Gamer
+      </h1>
+      <p class="text-slate-400 text-sm leading-relaxed mb-4">
+        Gestiona tu catalogo personal de videojuegos. Registra tus puntuaciones, realiza un
+        seguimiento del estado de tus partidas actuales y organiza tus juegos por plataforma y
+        genero de forma visual y limpia.
+      </p>
 
-  <ul *ngIf="listJuegos.length > 0">
-    <li *ngFor="let juego of listJuegos">
-      <div class="info-juego">
-        <strong>{{ getTitulo(juego) }}</strong>
-        <span>{{ getGenero(juego) }}</span>
-      </div>
-      <button class="btn-eliminar" (click)="eliminarVideojuego(juego['id'])">✕</button>
-    </li>
-  </ul>
-</div> -->
-<div class="min-h-screen bg-[#0d0e15] flex items-center justify-center p-4">
-  
-  <div class="w-full max-w-md bg-gradient-to-br from-[#131520] to-[#1a1d30] rounded-2xl p-8 shadow-2xl border border-purple-500/10 transition-all duration-300">
-    
-    <h1 class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
-      Colección de Videojuegos
-    </h1>
-
-    <div class="flex flex-col gap-4 mb-8">
-      <input 
-        type="text" 
-        [(ngModel)]="nuevoJuego['título']" 
-        placeholder="Título del juego (ej: Hogwarts Legacy)" 
-        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-blue-400 transition-colors duration-200 text-sm"
-      />
-      <input 
-        type="text" 
-        [(ngModel)]="nuevoJuego['género']" 
-        placeholder="Género (ej: RPG / Acción)" 
-        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-blue-400 transition-colors duration-200 text-sm"
-      />
-      <button 
-        (click)="agregarVideojuego()" 
+      <button
+        (click)="mostrarFormulario = !mostrarFormulario"
         class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 text-white font-semibold py-3 rounded-xl transition-all duration-200 text-sm shadow-lg shadow-purple-500/20 active:scale-[0.98]"
       >
-        Añadir Juego
+        {{ mostrarFormulario ? 'Cerrar Panel' : 'Crear Nuevo Videojuego' }}
       </button>
     </div>
 
-    <p *ngIf="listJuegos.length === 0" class="text-center text-slate-400 text-sm italic">
-      No hay videojuegos registrados...
-    </p>
+    <div
+      *ngIf="mostrarFormulario"
+      class="bg-[#131520]/80 backdrop-blur-xl border border-purple-500/10 rounded-2xl p-6 shadow-2xl flex-1 overflow-y-auto"
+    >
+      <h3 class="text-lg font-bold text-white mb-4 tracking-wide">Nuevo Registro</h3>
 
-    <ul *ngIf="listJuegos.length > 0" class="flex flex-col gap-3">
-      <li 
-        *ngFor="let juego of listJuegos" 
-        class="group bg-white/[0.02] hover:bg-white/[0.05] border-l-4 border-blue-400 hover:border-purple-500 rounded-r-xl p-4 flex justify-between items-center transition-all duration-200 transform hover:translate-x-1"
-      >
-        <div class="flex flex-col gap-1">
-          <strong class="text-white font-medium text-base tracking-wide">
-            {{ getTitulo(juego) }}
-          </strong>
+      <div class="flex flex-col gap-4">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Titulo del juego</label>
+          <input
+            type="text"
+            [(ngModel)]="nuevoJuego.titulo"
+            placeholder="ej: Hogwarts Legacy"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors"
+          />
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Genero</label>
+          <input
+            type="text"
+            [(ngModel)]="nuevoJuego.genero"
+            placeholder="ej: RPG, Accion, Metroidvania"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <span class="text-xs bg-purple-500/10 text-purple-300 px-2.5 py-0.5 rounded-full font-medium uppercase tracking-wider">
-              {{ getGenero(juego) }}
-            </span>
+            <label class="text-xs text-slate-400 block mb-1">Consola / Plataforma</label>
+            <select
+              [(ngModel)]="nuevoJuego.consola"
+              class="w-full bg-[#1a1d30] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors"
+            >
+              <option value="">Selecciona...</option>
+              <option value="PC">PC</option>
+              <option value="Playstation">Playstation</option>
+              <option value="Xbox">Xbox</option>
+              <option value="Nintendo">Nintendo</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Estado de juego</label>
+            <select
+              [(ngModel)]="nuevoJuego.estado"
+              class="w-full bg-[#1a1d30] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors"
+            >
+              <option value="">Selecciona...</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Progreso">En Progreso</option>
+              <option value="Completado">Completado</option>
+            </select>
           </div>
         </div>
 
-        <button 
-          (click)="eliminarVideojuego(juego['id'])" 
-          class="text-slate-400 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-all duration-200 text-sm font-bold"
-          title="Eliminar juego"
-        >
-          ✕
-        </button>
-      </li>
-    </ul>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="col-span-1">
+            <label class="text-xs text-slate-400 block mb-1">Ranking (1-100)</label>
+            <input
+              type="number"
+              min="1"
+              max="100"
+              [(ngModel)]="nuevoJuego.ranking"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors"
+            />
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs text-slate-400 block mb-1">URL de la Imagen / Portada</label>
+            <input
+              type="text"
+              [(ngModel)]="nuevoJuego.imagen"
+              placeholder="https://imagen.com/portada.jpg"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors"
+            />
+          </div>
+        </div>
 
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Descripcion o notas personales</label>
+          <textarea
+            rows="3"
+            [(ngModel)]="nuevoJuego.descripcion"
+            placeholder="¿Que te parecio el juego? Detalles de tu partida..."
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-blue-400 text-sm transition-colors resize-none"
+          ></textarea>
+        </div>
+
+        <button
+          (click)="agregarVideojuego()"
+          class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 text-sm shadow-lg shadow-emerald-900/20 active:scale-[0.98] mt-2"
+        >
+          Guardar Registro
+        </button>
+      </div>
+    </div>
   </div>
 </div>
